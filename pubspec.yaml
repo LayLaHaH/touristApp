@@ -38,6 +38,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   image_picker: ^1.0.1
   flutter_plugin_android_lifecycle: ^2.0.15
+  jwt_decoder: ^2.0.1
+  provider: ^6.0.5
+  quickalert: ^1.0.2
 
 dev_dependencies:
   flutter_test:

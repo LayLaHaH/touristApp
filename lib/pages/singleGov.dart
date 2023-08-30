@@ -29,7 +29,7 @@ class _SingleGovState extends State<SingleGov> {
 
   Future<List<Market>> getMarketsByGovernorate(int id) async {
   final response = await http.get(Uri.parse('$baseUrl/Governorate/governorates/$id/markets'));
-
+   print(neww);
   if (response.statusCode == 200) {
     final List<dynamic> marketsJson = json.decode(response.body);
     return marketsJson.map((json) => Market.fromJson(json)).toList();

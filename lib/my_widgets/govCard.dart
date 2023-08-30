@@ -77,16 +77,16 @@ class GovCard extends StatelessWidget {
               ),
             )
             ),
-            Positioned(
+           /*  Positioned(
               top:60,
               left:200,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  Text('')
+                  Text('asdas')
                 ],
               ),
-              ),
+              ), */
         ],
       ),
     );

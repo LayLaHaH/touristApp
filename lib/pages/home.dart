@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter/my_widgets/appBar.dart';
 import '../main.dart';
 import '../models/governorate.dart';
+import '../my_widgets/TopPictureAndDescription.dart';
 import '../my_widgets/govCard.dart';
 import '../my_widgets/collabsable.dart';
 import '../my_widgets/leftSideAddress.dart';
@@ -48,56 +49,8 @@ class _HomeState extends State<Home> {
             child: Column(
               children:  <Widget>[
                 //background photo and description
-                  SizedBox(
-                    width: 430,
-                    height: 280,
-                    child: Stack(
-                      children:[ 
-                        Positioned( 
-                          child: Image(image: AssetImage('Assets/homeBG.jpg'),)
-                          ),
-                        Positioned(
-                          top: 180,
-                          child: Container(
-                            width: 340,
-                            height: 100, 
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(50),
-                                topLeft: Radius.circular(50),
-                                bottomRight: Radius.circular(50)
-                              ),
-                              color: Colors.pink[800],
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 30,
-                          top: 190,
-                          child: Text('Welcome to Syria',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 25,
-                                        //fontWeight: FontWeight.bold,
-                                        ),
-                                        
-                                        )
-                          ),
-                        Positioned(
-                          top: 230,
-                          left: 30,
-                          child: Text('Landscapes, monuments, traditional areas \n and experiences like no other',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        
-                                        ),
-                                        
-                                        )
-                         ),
-                      ]
-                    ),
-                  ),
+                  TopPictureAndDescription(description: "Landscapes, monuments, traditional areas \n and experiences like no other",
+                   label: "Welcome to Syria",),
                   SizedBox(height: 15,),
                   //governorate slider
                   LeftSideAddress(title:'Governorates', fontSize: 20.0,),

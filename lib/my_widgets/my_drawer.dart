@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/isVisible.dart';
 
 class myDrawer extends StatefulWidget {
   const myDrawer({super.key});
@@ -33,8 +36,21 @@ class _myDrawerState extends State<myDrawer> {
           ListTile(leading: Icon(Icons.shopping_bag),title: Text('where to shop'),
             onTap: (){Navigator.pushNamed(context, '/shop');},), 
             Divider(), 
-          ListTile(leading: Icon(Icons.settings),title: Text('Tour Settings'),
-            onTap: (){Navigator.pushNamed(context, '/tourSettings');},),
+          Visibility(
+            visible: Provider.of<IsVisible>(context, listen: false).isVisible,
+            child: ListTile(leading: Icon(Icons.settings),title: Text('Tour Settings'),
+              onTap: (){Navigator.pushNamed(context, '/tourSettings');},),
+          ),
+          Visibility(
+            visible: !Provider.of<IsVisible>(context, listen: false).isVisible,
+            child: ListTile(leading: Icon(Icons.login),title: Text('Login'),
+              onTap: (){Navigator.pushNamed(context, '/login');},),
+          ),
+          Visibility(
+            visible: !Provider.of<IsVisible>(context, listen: false).isVisible,
+            child: ListTile(leading: Icon(Icons.login_outlined),title: Text('Register'),
+              onTap: (){Navigator.pushNamed(context, '/register');},),
+          ),
         ],
       ),
     );

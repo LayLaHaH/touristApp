@@ -2,13 +2,13 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_typing_uninitialized_variables, prefer_const_constructors, non_constant_identifier_names, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, file_names
 
 import 'dart:convert';
-//import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_flutter/models/activity.dart';
 import 'package:my_flutter/models/company.dart';
 import 'package:my_flutter/models/destination.dart';
-import 'package:my_flutter/models/tour.dart';
+import 'package:my_flutter/providers/CompanyId.dart';
+import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../my_widgets/MyTextFiled.dart';
@@ -16,14 +16,14 @@ import '../../my_widgets/multiTextInsert.dart';
 import '../../my_widgets/myMultiSelectList.dart';
 
 
-class EditTour extends StatefulWidget {
-  const EditTour({super.key});
+class AddTour extends StatefulWidget {
+  const AddTour({super.key});
 
   @override
-  _EditTourState createState() => _EditTourState();
+  _AddTourState createState() => _AddTourState();
 }
 
-class _EditTourState extends State<EditTour> {
+class _AddTourState extends State<AddTour> {
   bool isPrivate = false;
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -38,7 +38,6 @@ class _EditTourState extends State<EditTour> {
   List<Destination> _SelectedDestinations = [];
   List<Activity> _SelectedActivities = [];
   late var _selectedCompany ;
-  late var ID;
 
 
   Future<List<Activity>> getActivities() async {
@@ -67,18 +66,7 @@ class _EditTourState extends State<EditTour> {
     return destinations;
   }
 
-  Future<List<Company>> getCompanies() async {
-    // Make a get request to the records from the API
-    final response = await http.get(Uri.parse('$baseUrl/TourCompany/getAll'));
-    var responseData = json.decode(response.body);
 
-    List<Company> companies = [];
-    for (var comp in responseData) {
-      Company company = Company.fromJson(comp);
-      companies.add(company);
-    }
-    return companies;
-  }
 
   void _showDestinations() async {
     final List<Destination>? results = await showDialog(
@@ -128,7 +116,7 @@ class _EditTourState extends State<EditTour> {
       _activities.add(act.id.toString());}
 
     //sending the post request
-    final url = '$baseUrl/Tour/update?id=$ID';
+    final url = '$baseUrl/Tour/create';
     final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
     final body = {
       'Name': _nameController.text,
@@ -137,7 +125,7 @@ class _EditTourState extends State<EditTour> {
       'IsPrivate': isPrivate.toString(),
       'Theme': _themeController.text,
       'GuidLanguage': _guidController.text,
-      'CompanyId': _companyController,
+      'CompanyId': Provider.of<CompanyID>(context, listen: false).companyId.toString(),
       for (int i = 0; i < _destinations.length; i++) 
         'SelectedDestinations[$i]': _destinations[i],
       for (int i = 0; i < _activities.length; i++) 
@@ -150,11 +138,10 @@ class _EditTourState extends State<EditTour> {
         'InsertedItineraries[$i]': _itineraries[i],
     };
     
-    final response = await http.put(Uri.parse(url), headers: headers, body: body);
+    final response = await http.post(Uri.parse(url), headers: headers, body: body);
     if (response.statusCode == 201 || response.statusCode == 200) {
       debugPrint('Tour created successfully');
-      Navigator.pushNamed(context,'/tours');
-
+      Navigator.pushNamed(context,'/tourSettings');
     } else {
       debugPrint('Error creating tour: ${response.reasonPhrase}');
     }
@@ -165,12 +152,10 @@ class _EditTourState extends State<EditTour> {
 
   @override
   Widget build(BuildContext context) {
-    final Tour gov = ModalRoute.of(context)!.settings.arguments as Tour;
-    ID=gov.id;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Edit Tour'),
+        title: Text('Add Tour'),
         backgroundColor: Colors.pink[800],
       ),
       body: Center(
@@ -284,43 +269,6 @@ class _EditTourState extends State<EditTour> {
                                 label: Text(e.name),
                               ))
                           .toList(),
-                    ),
-                    //company list
-                    FutureBuilder(
-                      future:getCompanies() ,
-                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {  
-                        
-                        if (snapshot.data == null) {
-                          return
-                          TextButton(onPressed: () {  },
-                          child: const Text("loading.."),
-        
-                          );
-                        }
-                        else{
-                        _selectedCompany=snapshot.data[0];
-                        
-                      return DropdownButtonFormField<Company>(
-                        
-                        items: snapshot.data!.map((comp) => DropdownMenuItem<Company>(value: comp as Company, child: Text(comp.name))).toList().cast<DropdownMenuItem<Company>>(),
-                        decoration: InputDecoration(labelText: 'Governorate'),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedCompany = value;
-                            _companyController=_selectedCompany.id.toString();
-                            /////print(_selectedCompany.id);
-                          });
-                        },
-                        value: _selectedCompany,
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Please select a Governorate';
-                          }
-                          return null;
-                        },
-                      );
-                        }
-                      },
                     ),
                     //submit button
                     Padding(

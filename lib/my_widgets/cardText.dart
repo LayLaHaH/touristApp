@@ -13,24 +13,35 @@ class cardText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-      TextSpan(
-        text: label,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.bold,
-          color: Colors.black54,
-        ),
-        children: <TextSpan>[
-          TextSpan(
-            text: description,
-            style: TextStyle(
-              fontWeight: FontWeight.normal,
+    return
+     SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 330,
+            child: Text.rich(
+                    TextSpan(
+                      text: label,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: description,
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-      textAlign: TextAlign.left,
-    );
+          );
   }
 }

@@ -2,17 +2,22 @@
 
 
 
+//import 'dart:js_interop'
+
 import 'package:flutter/material.dart';
 import 'package:my_flutter/models/tour.dart';
 import 'package:my_flutter/my_widgets/appBar.dart';
 import 'package:my_flutter/my_widgets/my_drawer.dart';
-import 'package:my_flutter/pages/settings/deleteConfirmation.dart';
+import 'package:my_flutter/pages/managingTours/deleteConfirmation.dart';
+import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../my_widgets/leftSideAddress.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../../providers/UserId.dart';
 
 class TourSettings extends StatefulWidget {
   const TourSettings({super.key});
@@ -24,11 +29,14 @@ class TourSettings extends StatefulWidget {
 class _TourSettingsState extends State<TourSettings> {
   
   bool deleteFlag =false;
+  var userId1;
+  var _searchQuery;
+  List<Tour> _filteredTours = [];
   
 
  Future<List<Tour>> getRequest() async {
     // Make a get request to the records from the API
-    final response = await http.get(Uri.parse('$baseUrl/Tour/getAll2'));
+    final response = await http.get(Uri.parse('$baseUrl/Tour/GetCompanyTours?userId=$userId1'));
     var responseData = json.decode(response.body);
 
     List<Tour> tours = [];
@@ -63,14 +71,21 @@ class _TourSettingsState extends State<TourSettings> {
     }
   }
 
-  /*  @override
+/*     @override
   void initState() {
     super.initState();
-    getRequest();
+    if(_searchQuery.isNull){
+    function= getRequest;
+    }
+    else{
+      function=getSearchRequest;
+    }
     
-  } */
+  }  */
   @override
   Widget build(BuildContext context) {
+    userId1=Provider.of<UserID>(context, listen: false).userID;
+
     return Scaffold(
       appBar: MyAppBar(),
       drawer: myDrawer(),
@@ -135,6 +150,11 @@ class _TourSettingsState extends State<TourSettings> {
                   filled: true,
                   fillColor: Colors.grey[200],
                 ),
+                 onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                  });
+                },
               ),
               //the items
                Container(
@@ -144,51 +164,68 @@ class _TourSettingsState extends State<TourSettings> {
                     children: [
                       Expanded(flex: 1, child: Text('   ID')),
                       Expanded(flex: 2, child: Text('Name')),
-                      Expanded(flex: 2, child: Text('number of days')),
-                      Expanded(flex: 2, child: Text('Actions')),
+                      Expanded(flex: 2, child: Text('number of days ')),
+                      Expanded(flex: 2, child: Text('  Actions')),
                     ],
                   ),
                 ),
               SizedBox(
                 height: MediaQuery.of(context).size.height - 200,
                 child: FutureBuilder<List<Tour>>(
-                        future: getRequest(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return 
-                                ListView.builder(
-                                itemCount: snapshot.data!.length,
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: (BuildContext context, int index) =>
-                                Container(
-                                  height: 80,
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  future: getRequest(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                     final tours = snapshot.data!;
+                     final filteredTours = _searchQuery != null && _searchQuery.isNotEmpty
+                        ? tours.where((tour) {
+                            final query = _searchQuery.toLowerCase();
+                            return tour.name.toLowerCase().contains(query) ||
+                                tour.theme.toLowerCase().contains(query) ||
+                                tour.guidLanguage.toString().toLowerCase().contains(query) ||
+                                (tour.isPrivate ? 'private' : 'group').contains(query);
+                          }).toList()
+                        : tours;
+                      return ListView.builder(
+                        itemCount: filteredTours.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final tour = filteredTours[index];
+                          return Container(
+                            height: 80,
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
+                              children: [
+                                Expanded(flex: 1, child: Text(tour.id.toString())),
+                                Expanded(flex: 2, child: Text(tour.name)),
+                                Expanded(flex: 2, child: Text(tour.daysNnights)),
+                                Expanded(
+                                  flex: 2,
                                   child: Row(
                                     children: [
-                                      Expanded(flex: 1,child: Text(snapshot.data![index].id.toString()),),
-                                      Expanded(flex: 2,child: Text(snapshot.data![index].name) ),
-                                      Expanded(flex: 2, child: Text(snapshot.data![index].daysNnights)),
-                                      Expanded(flex: 2,child:Row(
-                                        children: [
-                                          IconButton( icon: Icon(Icons.edit,color: Color.fromARGB(255, 206, 134, 34),),
-                                            onPressed: (){Navigator.pushNamed(context, '/editTour',arguments: snapshot.data![index]);},),
-                                          IconButton( icon: Icon(Icons.delete,color: const Color.fromARGB(255, 233, 31, 16),),
-                                            onPressed:  () => deleteAlert(snapshot.data![index].id)),
-                                        ],
-                                       )
+                                      IconButton(
+                                        icon: Icon(Icons.edit, color: Color.fromARGB(255, 206, 134, 34)),
+                                        onPressed: () {
+                                          Navigator.pushNamed(context, '/editTour', arguments: tour);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.delete, color: const Color.fromARGB(255, 233, 31, 16)),
+                                        onPressed: () => deleteAlert(tour.id),
                                       ),
                                     ],
                                   ),
-                                )
-                              );
-                          }
-                           else if (snapshot.hasError) {
-                            return Text('Error loading data : ${snapshot.error}');
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        }
-                        )
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error loading data : ${snapshot.error}');
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                )
               )
           ]
           )

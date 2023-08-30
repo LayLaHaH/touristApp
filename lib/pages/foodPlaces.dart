@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:my_flutter/models/restaurant.dart';
+import 'package:my_flutter/my_widgets/TopPictureAndDescription.dart';
 import 'package:my_flutter/my_widgets/appBar.dart';
 import 'package:my_flutter/my_widgets/my_drawer.dart';
 
@@ -51,6 +52,8 @@ class _FoodPlacesState extends State<FoodPlaces> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: MyAppBar(),
       drawer: myDrawer(),
       body: 
@@ -58,8 +61,7 @@ class _FoodPlacesState extends State<FoodPlaces> {
         physics: BouncingScrollPhysics(),
           child: Column(
             children:  <Widget>[
-              SizedBox(height: 10,),
-              LeftSideAddress(title:'Restaurants', fontSize: 20.0,),
+              TopPictureAndDescription(label: "Restaurants", description: ""),
               SizedBox(
                   height: 540,
                   child: FutureBuilder<List<Restaurant>>(
@@ -191,7 +193,7 @@ class _FoodPlacesState extends State<FoodPlaces> {
                     },
                   ),
                 ),
-                SizedBox(height: 10,),
+              
             ]
           )
       ),

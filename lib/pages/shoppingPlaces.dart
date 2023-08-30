@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:my_flutter/models/market.dart';
+import 'package:my_flutter/my_widgets/TopPictureAndDescription.dart';
 import 'package:my_flutter/my_widgets/appBar.dart';
 import 'package:my_flutter/my_widgets/my_drawer.dart';
 
@@ -44,6 +45,8 @@ class _ShoppingPlacesState extends State<ShoppingPlaces> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: MyAppBar(),
       drawer: myDrawer(),
       body: 
@@ -51,8 +54,7 @@ class _ShoppingPlacesState extends State<ShoppingPlaces> {
         physics: BouncingScrollPhysics(),
           child: Column(
             children:  <Widget>[
-              SizedBox(height: 10,),
-              LeftSideAddress(title:'Markets (Souks)', fontSize: 20.0,),
+              TopPictureAndDescription(label: "Markets (Souks)", description: ""),
                 SizedBox(
                   height: 540,
                   child: FutureBuilder<List<Market>>(
@@ -110,6 +112,7 @@ class _ShoppingPlacesState extends State<ShoppingPlaces> {
                                     top: 70,
                                     left: 60,
                                     width: 230,
+                                    height: 80,
                                     child: Text( 
                                           snapshot.data![index].description,
                                           style: TextStyle( fontSize: 13,

@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors, file_names
 
 import 'package:flutter/material.dart';
+import 'package:my_flutter/providers/token.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/isVisible.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({Key? key}) : super(key: key);
@@ -18,9 +22,18 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Text('SYRTRAV',style: TextStyle(color: Colors.white,fontSize:20)),
         ),
         centerTitle: true,
-      /* actions:[ 
-        IconButton(icon: Icon(Icons.home), onPressed: () {  },),
-      ], */
+      actions:[ 
+        Visibility(
+          visible: Provider.of<IsVisible>(context, listen: false).isVisible,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,15,0),
+            child: IconButton(icon: Icon(Icons.login), onPressed: () { 
+              Provider.of<IsVisible>(context, listen: false).updateToken(false);
+              Provider.of<Token>(context, listen: false).updateToken("false");
+              Navigator.pushReplacementNamed(context, '/');
+             },),
+          )),
+      ],
       
       );
   }

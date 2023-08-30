@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:my_flutter/models/hotel.dart';
+import 'package:my_flutter/my_widgets/TopPictureAndDescription.dart';
 import 'package:my_flutter/my_widgets/appBar.dart';
 import 'package:my_flutter/my_widgets/my_drawer.dart';
 import 'package:http/http.dart' as http;
@@ -51,6 +52,8 @@ class _PlaceToStayState extends State<PlaceToStay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: MyAppBar(),
       drawer: myDrawer(),
       body: 
@@ -58,8 +61,7 @@ class _PlaceToStayState extends State<PlaceToStay> {
         physics: BouncingScrollPhysics(),
           child: Column(
             children:  <Widget>[
-              SizedBox(height: 10,),
-              LeftSideAddress(title:'Hotles ', fontSize: 20.0,),
+              TopPictureAndDescription(label: "Hotels", description: ""),
               SizedBox(
                   height: 540,
 
