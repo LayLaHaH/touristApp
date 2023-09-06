@@ -14,28 +14,38 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.pink[800],
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))
-      ),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
       title: TextButton(
-        onPressed: () { Navigator.popUntil(context, (route) => route.isFirst); },
+        onPressed: () {
+          if (Provider.of<IsVisible>(context, listen: false).isVisible) {
+            Navigator.pushNamed(context, '/');
+          } else {
+            Navigator.popUntil(context, (route) => route.isFirst);
+          }
+        },
         //onHover: ,
-        child: Text('SYRTRAV',style: TextStyle(color: Colors.white,fontSize:20)),
-        ),
-        centerTitle: true,
-      actions:[ 
+        child: Text('SYRTRAV',
+            style: TextStyle(color: Colors.white, fontSize: 20)),
+      ),
+      centerTitle: true,
+      actions: [
         Visibility(
-          visible: Provider.of<IsVisible>(context, listen: false).isVisible,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0,0,15,0),
-            child: IconButton(icon: Icon(Icons.login), onPressed: () { 
-              Provider.of<IsVisible>(context, listen: false).updateToken(false);
-              Provider.of<Token>(context, listen: false).updateToken("false");
-              Navigator.pushReplacementNamed(context, '/');
-             },),
-          )),
+            visible: Provider.of<IsVisible>(context, listen: false).isVisible,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              child: IconButton(
+                icon: Icon(Icons.login),
+                onPressed: () {
+                  Provider.of<IsVisible>(context, listen: false)
+                      .updateToken(false);
+                  Provider.of<Token>(context, listen: false)
+                      .updateToken("false");
+                  Navigator.pushReplacementNamed(context, '/');
+                },
+              ),
+            )),
       ],
-      
-      );
+    );
   }
 
   @override

@@ -30,9 +30,7 @@ void main() => runApp(MultiProvider(
       ChangeNotifierProvider(create: (_) => IsVisible()),
     ],
   child:   MaterialApp(
-  
-        
-  
+
         debugShowCheckedModeBanner: false,
   
         initialRoute:'/',
@@ -65,7 +63,7 @@ void main() => runApp(MultiProvider(
   
       ),
 ));
-var base='http://192.168.94.178:45455';
+var base='http://192.168.1.107:45455';
 var baseUrl='$base/api';  
 var photoUrl='$base/img';
 var neww=false;

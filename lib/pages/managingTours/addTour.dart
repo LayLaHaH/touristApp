@@ -15,7 +15,6 @@ import '../../my_widgets/MyTextFiled.dart';
 import '../../my_widgets/multiTextInsert.dart';
 import '../../my_widgets/myMultiSelectList.dart';
 
-
 class AddTour extends StatefulWidget {
   const AddTour({super.key});
 
@@ -34,11 +33,12 @@ class _AddTourState extends State<AddTour> {
   late var _companyController;
   List<TextEditingController> includesControllers = [TextEditingController()];
   List<TextEditingController> excludesControllers = [TextEditingController()];
-  List<TextEditingController> itinerariesControllers = [TextEditingController()];
+  List<TextEditingController> itinerariesControllers = [
+    TextEditingController()
+  ];
   List<Destination> _SelectedDestinations = [];
   List<Activity> _SelectedActivities = [];
-  late var _selectedCompany ;
-
+  late var _selectedCompany;
 
   Future<List<Activity>> getActivities() async {
     // Make a get request to the records from the API
@@ -66,89 +66,101 @@ class _AddTourState extends State<AddTour> {
     return destinations;
   }
 
-
-
   void _showDestinations() async {
     final List<Destination>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(itemsFuture: getDestinations(),
-                  getName: (destination) => destination.name);
+        return MultiSelect(
+            itemsFuture: getDestinations(),
+            getName: (destination) => destination.name);
       },
     );
     // Update UI
     if (results != null) {
-      setState(() {_SelectedDestinations = results;});
+      setState(() {
+        _SelectedDestinations = results;
+      });
     }
   }
 
   void _showActivities() async {
-   final List<Activity>? results = await showDialog(
+    final List<Activity>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(itemsFuture: getActivities(),
-                  getName: (activity) => activity.name);
+        return MultiSelect(
+            itemsFuture: getActivities(), getName: (activity) => activity.name);
       },
     );
     // Update UI
     if (results != null) {
-      setState(() { _SelectedActivities = results;});
+      setState(() {
+        _SelectedActivities = results;
+      });
     }
   }
 
- Future<void> _submit1() async{
-  if (_formKey.currentState!.validate()){
-    //preparing the lists for the body
-    List<String> _includes = [];
-    for (var controller in includesControllers) {
-      _includes.add(controller.text); }
-    List<String> _excludes = [];
-    for (var controller in excludesControllers) {
-      _excludes.add(controller.text);}
-    List<String> _itineraries = [];
-    for (var controller in itinerariesControllers) {
-      _itineraries.add(controller.text);} 
-    List<String> _destinations = [];
-    for (var dest in _SelectedDestinations) {
-      _destinations.add(dest.id.toString());}
-    List<String> _activities = [];
-    for (var act in _SelectedActivities) {
-      _activities.add(act.id.toString());}
+  Future<void> _submit1() async {
+    if (_formKey.currentState!.validate()) {
+      //preparing the lists for the body
+      List<String> _includes = [];
+      for (var controller in includesControllers) {
+        _includes.add(controller.text);
+      }
+      List<String> _excludes = [];
+      for (var controller in excludesControllers) {
+        _excludes.add(controller.text);
+      }
+      List<String> _itineraries = [];
+      for (var controller in itinerariesControllers) {
+        _itineraries.add(controller.text);
+      }
+      List<String> _destinations = [];
+      for (var dest in _SelectedDestinations) {
+        _destinations.add(dest.id.toString());
+      }
+      List<String> _activities = [];
+      for (var act in _SelectedActivities) {
+        _activities.add(act.id.toString());
+      }
 
-    //sending the post request
-    final url = '$baseUrl/Tour/create';
-    final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    final body = {
-      'Name': _nameController.text,
-      'DaysNnights': _daysController.text,
-      'Cost': _costController.text,
-      'IsPrivate': isPrivate.toString(),
-      'Theme': _themeController.text,
-      'GuidLanguage': _guidController.text,
-      'CompanyId': Provider.of<CompanyID>(context, listen: false).companyId.toString(),
-      for (int i = 0; i < _destinations.length; i++) 
-        'SelectedDestinations[$i]': _destinations[i],
-      for (int i = 0; i < _activities.length; i++) 
-        'SelectedActivities[$i]': _activities[i],
-      for (int i = 0; i < _includes.length; i++) 
-        'InsertedIncludes[$i]': _includes[i],
-      for (int i = 0; i < _excludes.length; i++) 
-        'InsertedExcludes[$i]': _excludes[i],
-      for (int i = 0; i < _itineraries.length; i++) 
-        'InsertedItineraries[$i]': _itineraries[i],
-    };
-    
-    final response = await http.post(Uri.parse(url), headers: headers, body: body);
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      debugPrint('Tour created successfully');
-      Navigator.pushNamed(context,'/tourSettings');
-    } else {
-      debugPrint('Error creating tour: ${response.reasonPhrase}');
+      print(
+          Provider.of<CompanyID>(context, listen: false).companyId.toString());
+
+      //sending the post request
+      final url = '$baseUrl/Tour/create';
+      final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+      final body = {
+        'Name': _nameController.text,
+        'DaysNnights': _daysController.text,
+        'Cost': _costController.text,
+        'IsPrivate': isPrivate.toString(),
+        'Theme': _themeController.text,
+        'GuidLanguage': _guidController.text,
+        'CompanyId':
+            Provider.of<CompanyID>(context, listen: false).companyId.toString(),
+        for (int i = 0; i < _destinations.length; i++)
+          'SelectedDestinations[$i]': _destinations[i],
+        for (int i = 0; i < _activities.length; i++)
+          'SelectedActivities[$i]': _activities[i],
+        for (int i = 0; i < _includes.length; i++)
+          'InsertedIncludes[$i]': _includes[i],
+        for (int i = 0; i < _excludes.length; i++)
+          'InsertedExcludes[$i]': _excludes[i],
+        for (int i = 0; i < _itineraries.length; i++)
+          'InsertedItineraries[$i]': _itineraries[i],
+      };
+
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        debugPrint('Tour created successfully');
+        Navigator.pushNamed(context, '/tourSettings');
+      } else {
+        debugPrint('Error creating tour: ${response.reasonPhrase}');
+        debugPrint('Error creating tour: ${response.body}');
+      }
     }
   }
-}
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -165,13 +177,16 @@ class _AddTourState extends State<AddTour> {
             padding: EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
-              child: ListView(
-                children:[ Column(
+              child: ListView(children: [
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     //name field
-                    MyTextField(nameController: _nameController, 
-                       erreMessage: "please enter a name", label: "Name",),
+                    MyTextField(
+                      nameController: _nameController,
+                      erreMessage: "please enter a name",
+                      label: "Name",
+                    ),
                     //number of days and nights field
                     TextFormField(
                       controller: _daysController,
@@ -199,7 +214,7 @@ class _AddTourState extends State<AddTour> {
                         return null;
                       },
                     ),
-                    //theme filed 
+                    //theme filed
                     TextFormField(
                       controller: _themeController,
                       decoration: InputDecoration(
@@ -236,39 +251,48 @@ class _AddTourState extends State<AddTour> {
                       },
                     ),
                     //includes fields
-                    MultiTextField(Controllers: includesControllers, label: "Includes"),
+                    MultiTextField(
+                        Controllers: includesControllers, label: "Includes"),
                     //excludes fields
-                    MultiTextField(Controllers: excludesControllers, label: "Excludes"),
+                    MultiTextField(
+                        Controllers: excludesControllers, label: "Excludes"),
                     //itineraries fields
-                    MultiTextField(Controllers: itinerariesControllers, label: "Itineraries"),
-                    SizedBox(height: 16,),
+                    MultiTextField(
+                        Controllers: itinerariesControllers,
+                        label: "Itineraries"),
+                    SizedBox(
+                      height: 16,
+                    ),
                     //select the destinations
                     ElevatedButton(
                       onPressed: _showDestinations,
                       child: const Text('Select deastinations'),
                     ),
-                    const Divider( height: 30,),
+                    const Divider(
+                      height: 30,
+                    ),
                     // display selected Destinations
                     Wrap(
-                      children: _SelectedDestinations
-                          .map((e) => Chip(
-                                label: Text(e.name),
-                              ))
-                          .toList(),
+                      children: _SelectedDestinations.map((e) => Chip(
+                            label: Text(e.name),
+                          )).toList(),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     //select the activities
                     ElevatedButton(
                       onPressed: _showActivities,
                       child: const Text('Select activities'),
                     ),
-                    const Divider(height: 30,),
+                    const Divider(
+                      height: 30,
+                    ),
                     //display selected activities
                     Wrap(
-                      children: _SelectedActivities
-                          .map((e) => Chip(
-                                label: Text(e.name),
-                              ))
-                          .toList(),
+                      children: _SelectedActivities.map((e) => Chip(
+                            label: Text(e.name),
+                          )).toList(),
                     ),
                     //submit button
                     Padding(
@@ -282,8 +306,7 @@ class _AddTourState extends State<AddTour> {
                     ),
                   ],
                 ),
-                ]
-              ),
+              ]),
             ),
           ),
         ),
@@ -291,4 +314,3 @@ class _AddTourState extends State<AddTour> {
     );
   }
 }
-
